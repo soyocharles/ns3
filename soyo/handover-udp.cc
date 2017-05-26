@@ -187,7 +187,6 @@ HandoverUdpClient::Send (uint64_t imsi, uint16_t cellId, uint16_t rnti)
       NS_LOG_INFO ("Error while sending " << m_size << " bytes to "
                                           << peerAddressStringStream.str ());
     }
-  std::cout << "hello" << m_peerPort << std::endl; 
 
 //  if (m_sent < m_count)
 //    {

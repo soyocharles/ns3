@@ -149,12 +149,13 @@ main (int argc, char *argv[])
 
       
       ueNodes.Get(u)->AddApplication(HandoverUdpClient_A);
+      ueNodes.Get(u+1)->AddApplication(HandoverUdpClient_B);
       clientApps.Add(HandoverUdpClient_A);
+      clientApps.Add(HandoverUdpClient_B);
       HandoverUdpClient_A->SetRemote(remoteHostAddr,ulPort);      
       HandoverUdpClient_B->SetRemote(remoteHostAddr,dlPort);      
 
       
-      HandoverUdpClient_A->freeFunctionPointer = &printsomething;
       
       
 //      HandoverUdpClient dlClient (ueIpIface.GetAddress (u), dlPort);
@@ -180,13 +181,14 @@ main (int argc, char *argv[])
   serverApps.Start (Seconds (0.01));
   clientApps.Start (Seconds (0.01));
   lteHelper->EnableTraces ();
-  Ptr<LteEnbRrc> LteEnbRrc_test = enbLteDevs.Get(0)->GetObject<LteEnbNetDevice>()->GetRrc();
-  LteEnbRrc_test->TraceConnectWithoutContext("ConnectionEstablished", MakeCallback(&HandoverUdpClient::Send,HandoverUdpClient_B));
-  
+  Ptr<LteEnbRrc> LteEnbRrc_test1 = enbLteDevs.Get(0)->GetObject<LteEnbNetDevice>()->GetRrc();
+  LteEnbRrc_test1->TraceConnectWithoutContext("ConnectionEstablished", MakeCallback(&HandoverUdpClient::Send,HandoverUdpClient_A));
+  Ptr<LteEnbRrc> LteEnbRrc_test2 = enbLteDevs.Get(1)->GetObject<LteEnbNetDevice>()->GetRrc();
+  LteEnbRrc_test2->TraceConnectWithoutContext("ConnectionEstablished", MakeCallback(&HandoverUdpClient::Send,HandoverUdpClient_B));
   
   
   // Uncomment to enable PCAP tracing
-  //p2ph.EnablePcapAll("lena-epc-first");
+  p2ph.EnablePcapAll("handovertrigger");
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
