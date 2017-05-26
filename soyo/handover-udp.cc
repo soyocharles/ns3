@@ -158,7 +158,7 @@ HandoverUdpClient::StopApplication (void)
 void
 HandoverUdpClient::Send (uint64_t imsi, uint16_t cellId, uint16_t rnti)
 {
-  std::cout << "hello" << m_peerPort << std::endl; 
+  std::cout << "hello send imsi  " << imsi << std::endl; 
   NS_LOG_FUNCTION (this);
   NS_ASSERT (m_sendEvent.IsExpired ());
   Ptr<Packet> p = Create<Packet> (m_size); // 8+4 : the size of the seqTs header
@@ -193,5 +193,46 @@ HandoverUdpClient::Send (uint64_t imsi, uint16_t cellId, uint16_t rnti)
 //      m_sendEvent = Simulator::Schedule (m_interval, &HandoverUdpClient::Send, this);
 //    }
 }
+
+void
+HandoverUdpClient::Sendm  (uint64_t imsi, uint16_t cellId, uint16_t rnti, LteRrcSap::MeasurementReport report)
+{
+    handoverreport report_all;
+    report_all.imsi = imsi;
+    report_all.cellId = cellId;
+    report_all.rnti = rnti;
+    report_all.report = report;
+  std::cout << "hello sendm imsi  " << imsi << std::endl; 
+  NS_LOG_FUNCTION (this);
+  NS_ASSERT (m_sendEvent.IsExpired ());
+  Ptr<Packet> p = Create<Packet> ((uint8_t*)&report_all,2048); // 8+4 : the size of the seqTs header
+
+  std::stringstream peerAddressStringStream;
+  if (Ipv4Address::IsMatchingType (m_peerAddress))
+    {
+      peerAddressStringStream << Ipv4Address::ConvertFrom (m_peerAddress);
+    }
+  else if (Ipv6Address::IsMatchingType (m_peerAddress))
+    {
+      peerAddressStringStream << Ipv6Address::ConvertFrom (m_peerAddress);
+    }
+
+  if ((m_socket->Send (p)) >= 0)
+    {
+      ++m_sent;
+      NS_LOG_INFO ("TraceDelay TX " << m_size << " bytes to "
+                                    << peerAddressStringStream.str () << " Uid: "
+                                    << p->GetUid () << " Time: "
+                                    << (Simulator::Now ()).GetSeconds ());
+
+    }
+  else
+    {
+      NS_LOG_INFO ("Error while sending " << m_size << " bytes to "
+                                          << peerAddressStringStream.str ());
+    }
+  
+}
+
 
 } // Namespace ns3

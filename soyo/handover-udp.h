@@ -19,11 +19,19 @@
 #include "ns3/event-id.h"
 #include "ns3/ptr.h"
 #include "ns3/ipv4-address.h"
+#include "ns3/lte-module.h"
 #include <ostream>
 namespace ns3 {
 
 class Socket;
 class Packet;
+struct handoverreport {
+  uint64_t imsi;
+  uint16_t cellId;
+  uint16_t  rnti;
+  LteRrcSap::MeasurementReport report;
+};
+
 
 
 class HandoverUdpClient : public Application
@@ -51,9 +59,7 @@ public:
    */
   void SetRemote (Address addr);
   void Send (uint64_t imsi, uint16_t cellId, uint16_t rnti);
-  void (HandoverUdpClient::*psend) (uint64_t,uint64_t,uint64_t) ; 
-  void (*freeFunctionPointer)(uint64_t imsi, uint16_t cellId, uint16_t rnti);
-  
+  void Sendm(uint64_t imsi, uint16_t cellId, uint16_t rnti, LteRrcSap::MeasurementReport report);  
 protected:
   virtual void DoDispose (void);
 

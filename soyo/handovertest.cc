@@ -39,7 +39,7 @@ main (int argc, char *argv[])
 {
 
   uint16_t numberOfNodes = 2;
-  double simTime = 1;
+  double simTime = 5;
   double distance = 60.0;
   double interPacketInterval = 100;
 
@@ -182,10 +182,18 @@ main (int argc, char *argv[])
   clientApps.Start (Seconds (0.01));
   lteHelper->EnableTraces ();
   Ptr<LteEnbRrc> LteEnbRrc_test1 = enbLteDevs.Get(0)->GetObject<LteEnbNetDevice>()->GetRrc();
-  LteEnbRrc_test1->TraceConnectWithoutContext("ConnectionEstablished", MakeCallback(&HandoverUdpClient::Send,HandoverUdpClient_A));
+  LteEnbRrc_test1->TraceConnectWithoutContext("HandoverEndOk", MakeCallback(&HandoverUdpClient::Send,HandoverUdpClient_A));
+  LteEnbRrc_test1->TraceConnectWithoutContext("RecvMeasurementReport", MakeCallback(&HandoverUdpClient::Sendm,HandoverUdpClient_A));
+
   Ptr<LteEnbRrc> LteEnbRrc_test2 = enbLteDevs.Get(1)->GetObject<LteEnbNetDevice>()->GetRrc();
-  LteEnbRrc_test2->TraceConnectWithoutContext("ConnectionEstablished", MakeCallback(&HandoverUdpClient::Send,HandoverUdpClient_B));
-  
+  LteEnbRrc_test2->TraceConnectWithoutContext("HandoverEndOk", MakeCallback(&HandoverUdpClient::Send,HandoverUdpClient_B));
+  LteEnbRrc_test2->TraceConnectWithoutContext("RecvMeasurementReport", MakeCallback(&HandoverUdpClient::Sendm,HandoverUdpClient_B));
+ // Add X2 inteface
+  lteHelper->AddX2Interface (enbNodes);
+
+  // X2-based Handover
+  lteHelper->HandoverRequest (Seconds (2), ueLteDevs.Get (0), enbLteDevs.Get (0), enbLteDevs.Get (1));
+
   
   // Uncomment to enable PCAP tracing
   p2ph.EnablePcapAll("handovertrigger");
