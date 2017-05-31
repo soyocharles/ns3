@@ -1,4 +1,3 @@
-
 #include "ns3/lte-helper.h"
 #include "ns3/epc-helper.h"
 #include "ns3/core-module.h"
@@ -148,8 +147,8 @@ main (int argc, char *argv[])
       Ptr<HandoverUdpClient> HandoverUdpClient_B = CreateObject<HandoverUdpClient> ();
 
       
-      ueNodes.Get(u)->AddApplication(HandoverUdpClient_A);
-      ueNodes.Get(u+1)->AddApplication(HandoverUdpClient_B);
+      enbNodes.Get(u)->AddApplication(HandoverUdpClient_A);
+      enbNodes.Get(u+1)->AddApplication(HandoverUdpClient_B);
       clientApps.Add(HandoverUdpClient_A);
       clientApps.Add(HandoverUdpClient_B);
       HandoverUdpClient_A->SetRemote(remoteHostAddr,ulPort);      
